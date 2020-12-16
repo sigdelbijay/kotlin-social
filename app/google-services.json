@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "679751235909",
+    "project_id": "kotlin-social-61988",
+    "storage_bucket": "kotlin-social-61988.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679751235909:android:ffb76d7b3bd0b0583ae62c",
+        "android_client_info": {
+          "package_name": "com.example.snplc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "679751235909-fkfuv37si59g1e0n5v7l356um85emp8j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2BxUNoL53v_4MqZ2FIlDmMdO1nqWWUP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "679751235909-fkfuv37si59g1e0n5v7l356um85emp8j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
