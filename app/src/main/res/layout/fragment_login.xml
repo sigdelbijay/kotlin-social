@@ -8,8 +8,8 @@
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Kotlin-Social"
-        android:textSize="70sp"
+        android:text="kotlin social"
+        android:textSize="50sp"
         app:fontFamily="@font/tahoma_bold"
         android:textFontWeight="900"
         android:textColor="@color/colorPrimary"
