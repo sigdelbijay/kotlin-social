@@ -13,6 +13,7 @@ import com.example.kotlin_social.other.Event
 import com.example.kotlin_social.other.Resource
 import com.example.kotlin_social.repositories.AuthRepository
 import com.google.firebase.auth.AuthResult
+import com.google.rpc.context.AttributeContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,6 +26,9 @@ class AuthViewModel @ViewModelInject constructor(
 
     private val _registerStatus = MutableLiveData<Event<Resource<AuthResult>>>()
     val registerStatus : LiveData<Event<Resource<AuthResult>>> = _registerStatus
+
+    private val _loginStatus = MutableLiveData<Event<Resource<AuthResult>>>()
+    val loginStatus : LiveData<Event<Resource<AuthResult>>> = _loginStatus
 
     fun register(email: String, username: String, password: String, repeatedPassword: String) {
         val error = if(email.isEmpty() || username.isEmpty() || password.isEmpty()) {
@@ -51,7 +55,17 @@ class AuthViewModel @ViewModelInject constructor(
             val result = repository.register(email, username, password)
             _registerStatus.postValue(Event(result))
         }
-
     }
 
+    fun login(email: String, password: String) {
+        if(email.isEmpty() || password.isEmpty()) {
+            val error = applicationContext.getString(R.string.error_input_empty)
+            _loginStatus.postValue(Event(Resource.Error(error)))
+        }
+        _loginStatus.postValue(Event(Resource.Loading()))
+        viewModelScope.launch {
+            val result = repository.login(email, password)
+            _loginStatus.postValue(Event(result))
+        }
+    }
 }

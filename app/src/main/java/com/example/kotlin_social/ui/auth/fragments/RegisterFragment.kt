@@ -31,7 +31,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             )
         }
 
-
         tvLogin.setOnClickListener {
             if (findNavController().previousBackStackEntry != null) {
                 findNavController().popBackStack();

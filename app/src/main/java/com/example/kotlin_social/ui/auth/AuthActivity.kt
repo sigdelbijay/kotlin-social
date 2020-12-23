@@ -1,7 +1,8 @@
-package com.example.kotlin_social
+package com.example.kotlin_social.ui.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.kotlin_social.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
