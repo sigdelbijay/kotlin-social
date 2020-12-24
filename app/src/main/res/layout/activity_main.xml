@@ -22,7 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="androidx.navigation.fragment.NavHostFragment"
-            app:defaultNavHost="true" />
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/main_nav_graph"/>
 
     </FrameLayout>
 
@@ -30,7 +31,7 @@
         android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_gravity="bottom">
         app:fabCradleMargin="10dp"
         app:fabCradleRoundedCornerRadius="20dp"
         app:fabCradleVerticalOffset="0dp"
@@ -40,9 +41,11 @@
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:menu="@menu/bottom_navigation_menu"
             android:layout_marginEnd="16dp"
             app:itemIconTint="@drawable/bottom_nav_selector"
-            android:background="#00000000"/>
+            android:background="#00000000"
+            />
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 
