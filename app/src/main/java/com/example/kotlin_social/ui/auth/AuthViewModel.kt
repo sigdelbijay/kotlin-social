@@ -13,7 +13,6 @@ import com.example.kotlin_social.other.Event
 import com.example.kotlin_social.other.Resource
 import com.example.kotlin_social.repositories.AuthRepository
 import com.google.firebase.auth.AuthResult
-import com.google.rpc.context.AttributeContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,7 +62,7 @@ class AuthViewModel @ViewModelInject constructor(
             _loginStatus.postValue(Event(Resource.Error(error)))
         }
         _loginStatus.postValue(Event(Resource.Loading()))
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             val result = repository.login(email, password)
             _loginStatus.postValue(Event(result))
         }
