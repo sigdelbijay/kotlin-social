@@ -2,16 +2,19 @@ package com.example.kotlin_social.repositories
 
 import android.net.Uri
 import com.example.kotlin_social.data.entities.Post
+import com.example.kotlin_social.data.entities.User
 import com.example.kotlin_social.other.Resource
 import com.example.kotlin_social.other.safeCall
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.lang.IllegalStateException
 import java.util.*
 
 @ActivityScoped
@@ -38,6 +41,74 @@ class DefaultMainRepository : MainRepository{
             )
             posts.document(postId).set(post).await()
             Resource.Success(Any())
+        }
+    }
+
+    override suspend fun getUsers(uids: List<String>) = withContext(Dispatchers.IO) {
+        safeCall {
+            val userList = users.whereIn("uid", uids).orderBy("username")
+                .get().await().toObjects(User::class.java)
+            Resource.Success(userList)
+        }
+    }
+
+    override suspend fun getUser(uid: String) = withContext(Dispatchers.IO) {
+        safeCall {
+            val user = users.document(uid).get().await().toObject(User::class.java)
+                ?: throw IllegalStateException()
+            val currentUid = FirebaseAuth.getInstance().uid!! //auth.uid!!
+            val currentUser = users.document(currentUid).get().await().toObject(User::class.java)
+                ?: throw IllegalStateException()
+            user.isFollowing = uid in currentUser.follows
+            Resource.Success(user)
+
+        }
+    }
+
+    override suspend fun getPostForFollows() = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = FirebaseAuth.getInstance().uid!!
+            val follows = getUser(uid).data!!.follows
+            val allPosts = posts.whereIn("authorId", follows)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(Post::class.java)
+                .onEach { post ->
+                    val user = getUser(post.authorId).data!!
+                    post.authorProfilePictureUrl = user.profilePictureUrl
+                    post.authorUsername = user.username
+                    post.isLiked = uid in post.likedBy
+                }
+            Resource.Success(allPosts)
+        }
+    }
+
+    override suspend fun toggleLikeForPost(post: Post) = withContext(Dispatchers.IO){
+        safeCall {
+            var isLiked = false
+            fireStore.runTransaction { transaction ->
+                val uid = FirebaseAuth.getInstance().uid!!
+                val postResult = transaction.get(posts.document(post.id))
+                val currentLikes = postResult.toObject(Post::class.java)?.likedBy ?: listOf()
+                transaction.update(
+                    posts.document(post.id),
+                    "likedBy",
+                    if(uid in currentLikes) currentLikes - uid else {
+                        currentLikes + uid
+                        isLiked = true
+                    }
+                )
+            }.await()
+            Resource.Success(isLiked)
+        }
+    }
+
+    override suspend fun deletePost(post: Post) = withContext(Dispatchers.IO) {
+        safeCall {
+            posts.document(post.id).delete().await()
+            storage.getReferenceFromUrl(post.imageUrl).delete().await()
+            Resource.Success(post)
         }
     }
 
