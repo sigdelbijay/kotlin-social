@@ -84,6 +84,24 @@ class DefaultMainRepository : MainRepository{
         }
     }
 
+    override suspend fun getPostForProfile(uid: String) = withContext(Dispatchers.IO) {
+        safeCall {
+            val user = getUser(uid).data!!
+            val allPosts = posts.whereEqualTo("authorId", uid)
+                    .orderBy("date", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
+                    .toObjects(Post::class.java)
+                    .onEach{post ->
+                        post.authorProfilePictureUrl = user.profilePictureUrl
+                        post.authorUsername = user.username
+                        post.isLiked = user.uid in post.likedBy
+                    }
+            Resource.Success(allPosts)
+
+        }
+    }
+
     override suspend fun toggleLikeForPost(post: Post) = withContext(Dispatchers.IO){
         safeCall {
             var isLiked = false
