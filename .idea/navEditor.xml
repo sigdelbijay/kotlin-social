@@ -54,6 +54,11 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="globalActionToCreatePostFragment">
+                    <value>
+                      <LayoutPositions />
+                    </value>
+                  </entry>
                   <entry key="homeFragment">
                     <value>
                       <LayoutPositions>
@@ -61,6 +66,18 @@
                           <Point>
                             <option name="x" value="-220" />
                             <option name="y" value="-72" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="othersProfileFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-229" />
+                            <option name="y" value="-502" />
                           </Point>
                         </option>
                       </LayoutPositions>
