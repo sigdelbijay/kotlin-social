@@ -87,6 +87,8 @@ class DefaultMainRepository : MainRepository{
     override suspend fun getPostForProfile(uid: String) = withContext(Dispatchers.IO) {
         safeCall {
             val user = getUser(uid).data!!
+            //val currentUid = auth.uid!!
+            //post.isLiked = currentUid in post.likedBy
             val allPosts = posts.whereEqualTo("authorId", uid)
                     .orderBy("date", Query.Direction.DESCENDING)
                     .get()
@@ -113,12 +115,26 @@ class DefaultMainRepository : MainRepository{
                     posts.document(post.id),
                     "likedBy",
                     if(uid in currentLikes) currentLikes - uid else {
-                        currentLikes + uid
                         isLiked = true
+                        currentLikes + uid
                     }
                 )
             }.await()
             Resource.Success(isLiked)
+        }
+    }
+
+    override suspend fun toggleFollowForUser(uid: String)= withContext(Dispatchers.IO) {
+        safeCall {
+            var isFollowing = false
+            fireStore.runTransaction { transaction ->
+                val currentUid = auth.uid!!
+                val currentUser = transaction.get(users.document(currentUid)).toObject(User::class.java)!!
+                isFollowing = uid in currentUser.follows
+                val newFollows = if(isFollowing) currentUser.follows - uid else currentUser.follows + uid
+                transaction.update(users.document(currentUid), "follows", newFollows)
+            }.await()
+            Resource.Success(!isFollowing)
         }
     }
 
