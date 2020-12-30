@@ -27,7 +27,7 @@ class CreatePostViewModel @ViewModelInject constructor(
     private val _curImageUri = MutableLiveData<Uri>()
     val curImageUri : LiveData<Uri> = _curImageUri
 
-    fun setImageUri(uri: Uri) {
+    fun setCurImageUri(uri: Uri) {
         _curImageUri.postValue(uri)
     }
 
@@ -35,11 +35,13 @@ class CreatePostViewModel @ViewModelInject constructor(
         if(text.isEmpty()) {
             val error = applicationContext.getString(R.string.error_input_empty)
             _createPostStatus.postValue(Event(Resource.Error(error)))
+        } else {
+            _createPostStatus.postValue(Event(Resource.Loading()))
+            viewModelScope.launch(dispatcher) {
+                val result = repository.createPost(imageUri, text)
+                _createPostStatus.postValue(Event(result))
+            }
         }
-        _createPostStatus.postValue(Event(Resource.Loading()))
-        viewModelScope.launch(dispatcher) {
-            val result = repository.createPost(imageUri, text)
-            _createPostStatus.postValue(Event(result))
-        }
+
     }
 }

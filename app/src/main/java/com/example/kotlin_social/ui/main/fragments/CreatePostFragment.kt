@@ -29,11 +29,12 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
     @Inject
     lateinit var glide: RequestManager
-    private val viewModel : CreatePostViewModel by viewModels()
-    private lateinit var cropContent: ActivityResultLauncher<String>
-    private var curImageUri: Uri? = null
 
-    private val cropActivityResultContract = object: ActivityResultContract<String, Uri?>() {
+    private val viewModel: CreatePostViewModel by viewModels()
+
+    private lateinit var cropContent: ActivityResultLauncher<String>
+
+    private val cropActivityResultContract = object : ActivityResultContract<String, Uri?>() {
         override fun createIntent(context: Context, input: String?): Intent {
             return CropImage.activity()
                     .setAspectRatio(16, 9)
@@ -46,11 +47,13 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         }
     }
 
+    private var curImageUri: Uri? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cropContent = registerForActivityResult(cropActivityResultContract) {
-            it?.let{
-                viewModel.setImageUri(it)
+            it?.let {
+                viewModel.setCurImageUri(it)
             }
         }
     }
@@ -59,17 +62,17 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         super.onViewCreated(view, savedInstanceState)
         subscribeToObservers()
         btnSetPostImage.setOnClickListener {
-            cropContent.launch("image/*")
+            cropContent.launch("text/plain")
         }
         ivPostImage.setOnClickListener {
-            cropContent.launch("image/*")
+            cropContent.launch("text/plain")
         }
-
         btnPost.setOnClickListener {
-            curImageUri?.let {uri ->
+            curImageUri?.let { uri ->
                 viewModel.createPost(uri, etPostDescription.text.toString())
             } ?: snackbar(getString(R.string.error_no_image_chosen))
         }
+
         slideUpViews(requireContext(), ivPostImage, btnSetPostImage, tilPostText, btnPost)
     }
 
@@ -78,21 +81,16 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             curImageUri = it
             btnSetPostImage.isVisible = false
             glide.load(curImageUri).into(ivPostImage)
-
         }
         viewModel.createPostStatus.observe(viewLifecycleOwner, EventObserver(
-               onError = {
-                   createPostProgressBar.isVisible = false
-                   snackbar(it)
-               },
+                onError = {
+                    createPostProgressBar.isVisible = false
+                    snackbar(it)
+                },
                 onLoading = { createPostProgressBar.isVisible = true }
-        ) { result ->
+        ) {
             createPostProgressBar.isVisible = false
-            snackbar("post successful")
             findNavController().popBackStack()
         })
     }
-
-
-
 }

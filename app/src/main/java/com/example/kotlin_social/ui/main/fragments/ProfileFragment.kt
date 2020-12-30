@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlin_social.R
-import com.example.kotlin_social.adapters.PostAdapter
 import com.example.kotlin_social.other.EventObserver
 import com.example.kotlin_social.ui.main.viewmodels.BasePostViewModel
 import com.example.kotlin_social.ui.main.viewmodels.ProfileViewModel
@@ -40,14 +38,10 @@ open class ProfileFragment : BasePostFragment(R.layout.fragment_profile) {
         viewModel.loadProfile(uid)
     }
 
-    //TODO - assigning rvPosts.apply{} to setupRecyclerView
-    private fun setupRecyclerView() {
-        rvPosts.apply {
-            adapter = postAdapter
-            layoutManager = LinearLayoutManager(requireContext())
-            itemAnimator = null
-
-        }
+    private fun setupRecyclerView() = rvPosts.apply {
+        adapter = postAdapter
+        itemAnimator = null
+        layoutManager = LinearLayoutManager(requireContext())
     }
 
     private fun subscribeToObservers() {

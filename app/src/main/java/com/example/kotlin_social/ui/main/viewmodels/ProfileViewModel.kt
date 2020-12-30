@@ -14,8 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ProfileViewModel @ViewModelInject constructor(
-      private val repository: MainRepository,
-      private val dispatcher: CoroutineDispatcher = Dispatchers.Main
+        private val repository: MainRepository,
+        private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : BasePostViewModel(repository, dispatcher) {
 
     private val _profileMeta = MutableLiveData<Event<Resource<User>>>()
