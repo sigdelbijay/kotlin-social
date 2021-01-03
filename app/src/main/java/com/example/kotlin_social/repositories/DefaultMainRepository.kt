@@ -154,4 +154,29 @@ class DefaultMainRepository : MainRepository{
             Resource.Success(userResults)
         }
     }
+
+    override suspend fun createComment(commentText: String, postId: String) = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = auth.uid!!
+            val commentId = UUID.randomUUID().toString()
+            val user = getUser(uid).data!!
+            val comment = Comment(
+                commentId,
+                postId,
+                uid,
+                user.username,
+                user.profilePictureUrl,
+                commentText
+            )
+            comments.document(commentId).set(comment).await()
+            Resource.Success(comment)
+        }
+    }
+
+    override suspend fun deleteComment(comment: Comment) = withContext(Dispatchers.IO) {
+        safeCall {
+            comments.document(comment.commentId).delete().await()
+            Resource.Success(comment)
+        }
+    }
 }
