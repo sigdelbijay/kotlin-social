@@ -1,6 +1,7 @@
 package com.example.kotlin_social.repositories
 
 import android.net.Uri
+import com.example.kotlin_social.data.entities.Comment
 import com.example.kotlin_social.data.entities.Post
 import com.example.kotlin_social.data.entities.User
 import com.example.kotlin_social.other.Resource

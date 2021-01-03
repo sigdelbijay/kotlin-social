@@ -12,8 +12,10 @@ import com.example.kotlin_social.ui.main.viewmodels.BasePostViewModel
 import com.example.kotlin_social.ui.main.viewmodels.ProfileViewModel
 import com.example.kotlin_social.ui.snackbar
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_profile.*
 
+@AndroidEntryPoint
 open class ProfileFragment : BasePostFragment(R.layout.fragment_profile) {
     override val postProgressBar: ProgressBar
         get() = profilePostsProgressBar

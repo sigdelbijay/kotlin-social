@@ -1,6 +1,7 @@
 package com.example.kotlin_social.repositories
 
 import android.net.Uri
+import com.example.kotlin_social.data.entities.Comment
 import com.example.kotlin_social.data.entities.Post
 import com.example.kotlin_social.data.entities.User
 import com.example.kotlin_social.other.Resource
@@ -23,5 +24,9 @@ interface MainRepository {
     suspend fun deletePost(post: Post): Resource<Post>
 
     suspend fun searchUser(query: String): Resource<List<User>>
+
+    suspend fun createComment(commentText: String, postId: String): Resource<Comment>
+
+    suspend fun deleteComment(comment: Comment): Resource<Comment>
 
 }
