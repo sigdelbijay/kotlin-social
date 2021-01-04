@@ -30,12 +30,23 @@
     <action android:id="@+id/globalActionToOthersProfileFragment"
         app:destination="@+id/othersProfileFragment"/>
 
+    <action android:id="@+id/globalActionToCommentDialogFragment"
+        app:destination="@+id/commentDialogFragment"/>
+
     <fragment
         android:id="@+id/othersProfileFragment"
         android:name="com.example.kotlin_social.ui.main.fragments.OthersProfileFragment"
         android:label="OthersProfileFragment" >
         <argument
             android:name="uid"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/commentDialog"
+        android:name="com.example.kotlin_social.dialogs.CommentDialog"
+        android:label="CommentDialog" >
+        <argument
+            android:name="postId"
             app:argType="string" />
     </fragment>
 </navigation>

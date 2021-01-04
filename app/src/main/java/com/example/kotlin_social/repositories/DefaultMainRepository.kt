@@ -68,7 +68,7 @@ class DefaultMainRepository : MainRepository{
 
     override suspend fun getPostForFollows() = withContext(Dispatchers.IO) {
         safeCall {
-            val uid = FirebaseAuth.getInstance().uid!!
+            val uid = auth.uid!!
             val follows = getUser(uid).data!!.follows
             val allPosts = posts.whereIn("authorId", follows)
                 .orderBy("date", Query.Direction.DESCENDING)
@@ -109,7 +109,7 @@ class DefaultMainRepository : MainRepository{
         safeCall {
             var isLiked = false
             fireStore.runTransaction { transaction ->
-                val uid = FirebaseAuth.getInstance().uid!!
+                val uid = auth.uid!!
                 val postResult = transaction.get(posts.document(post.id))
                 val currentLikes = postResult.toObject(Post::class.java)?.likedBy ?: listOf()
                 transaction.update(
@@ -177,6 +177,24 @@ class DefaultMainRepository : MainRepository{
         safeCall {
             comments.document(comment.commentId).delete().await()
             Resource.Success(comment)
+        }
+    }
+
+    override suspend fun getCommentsForPost(postId: String) = withContext(Dispatchers.IO) {
+        safeCall {
+            val commentList = comments
+                .whereEqualTo("postId", postId)
+                .orderBy("date")
+                .get()
+                .await()
+                .toObjects(Comment::class.java)
+                .onEach { comment ->
+                    val user = getUser(comment.uid).data!!
+                    comment.username = user.username
+                    comment.profilePictureUrl = user.profilePictureUrl
+
+                }
+            Resource.Success(commentList)
         }
     }
 }
