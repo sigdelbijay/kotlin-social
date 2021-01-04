@@ -4,7 +4,9 @@ import android.view.View
 import android.widget.ProgressBar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
+import com.example.kotlin_social.R
 import com.example.kotlin_social.adapters.PostAdapter
 import com.example.kotlin_social.adapters.UserAdapter
 import com.example.kotlin_social.dialogs.DeletePostDialog
@@ -49,8 +51,17 @@ abstract class BasePostFragment(
             }.show(childFragmentManager, null)
         }
 
-        postAdapter.setOnnLikedByClikListener { post ->
+        postAdapter.setOnLikedByClikListener { post ->
             basePostViewModel.getUsers(post.likedBy)
+        }
+
+        postAdapter.setOnCommentsClikListener { comment ->
+            findNavController().navigate(
+                R.id.globalActionToCommentDialog,
+                Bundle().apply {
+                    putString("postId", comment.id)
+                }
+            )
         }
     }
 

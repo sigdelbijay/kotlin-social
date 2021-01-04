@@ -52,8 +52,6 @@ class CommentAdapter @Inject constructor(
         )
     }
 
-
-
     override fun getItemCount(): Int {
         return comments.size
     }

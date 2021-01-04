@@ -139,7 +139,7 @@ class PostAdapter @Inject constructor(
         onDeletePostClikListener = listener
     }
 
-    fun setOnnLikedByClikListener(listener: (Post) -> Unit) {
+    fun setOnLikedByClikListener(listener: (Post) -> Unit) {
         onLikedByClikListener = listener
     }
 
