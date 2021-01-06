@@ -3,7 +3,9 @@ package com.example.kotlin_social.repositories
 import android.net.Uri
 import com.example.kotlin_social.data.entities.Comment
 import com.example.kotlin_social.data.entities.Post
+import com.example.kotlin_social.data.entities.ProfileUpdate
 import com.example.kotlin_social.data.entities.User
+import com.example.kotlin_social.other.Constants
 import com.example.kotlin_social.other.Resource
 import com.example.kotlin_social.other.safeCall
 import com.google.firebase.auth.FirebaseAuth
@@ -197,4 +199,31 @@ class DefaultMainRepository : MainRepository{
             Resource.Success(commentList)
         }
     }
+
+    override suspend fun updateProfilePicture(uid: String, imageUri: Uri) = withContext(Dispatchers.IO) {
+        val storageRef = storage.getReference(uid)
+        val user = getUser(uid).data!!
+        if(user.profilePictureUrl != Constants.DEFAULT_PROFILE_PICTURE_URL){
+            storage.getReferenceFromUrl(user.profilePictureUrl).delete().await()
+        }
+        storageRef.putFile(imageUri).await().metadata?.reference?.downloadUrl?.await()
+    }
+
+    override suspend fun updateProfile(profileUpdate: ProfileUpdate) = withContext(Dispatchers.IO) {
+        safeCall {
+            val imageUrl = profileUpdate.profilePictureUri?.let { uri ->
+                updateProfilePicture(profileUpdate.uidToUpdate, uri).toString()
+            }
+            val map = mutableMapOf(
+                "username" to profileUpdate.username,
+                "description" to profileUpdate.description
+            )
+            imageUrl?.let{ url ->
+                map["profilePictureUrl"] = url
+            }
+            users.document(profileUpdate.uidToUpdate).update(map.toMap()).await()
+            Resource.Success(Any())
+        }
+    }
+
 }

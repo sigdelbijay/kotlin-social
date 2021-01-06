@@ -3,6 +3,7 @@ package com.example.kotlin_social.repositories
 import android.net.Uri
 import com.example.kotlin_social.data.entities.Comment
 import com.example.kotlin_social.data.entities.Post
+import com.example.kotlin_social.data.entities.ProfileUpdate
 import com.example.kotlin_social.data.entities.User
 import com.example.kotlin_social.other.Resource
 
@@ -30,5 +31,9 @@ interface MainRepository {
     suspend fun deleteComment(comment: Comment): Resource<Comment>
 
     suspend fun getCommentsForPost(postId: String): Resource<List<Comment>>
+
+    suspend fun updateProfile(profileUpdate: ProfileUpdate): Resource<Any>
+
+    suspend fun updateProfilePicture(uid: String, imageUri: Uri): Uri?
 
 }
